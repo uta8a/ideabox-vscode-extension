@@ -14,3 +14,12 @@ tasks:
     cmds:
       - npm run install:all
     silent: true
+  "lint:fix":
+    cmds:
+      - npm run lint:fix
+    silent: true
+  test:
+    cmds:
+      - npm run compile
+      - node ./out/test/runTest.js
+    silent: true
