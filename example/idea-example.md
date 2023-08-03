@@ -1,5 +1,5 @@
 ---
-title: 'ideabox'
+title: ideabox
 ---
 
 - [ ] todo#1

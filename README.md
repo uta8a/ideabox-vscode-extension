@@ -2,6 +2,25 @@
 
 Simple idea input/arrangement tool for VS Code
 
+## Development
+
+- build
+
+```
+task
+```
+
+- test
+
+```
+task test
+```
+
+- debug
+
+`task` でビルドした後、F5ボタンを押すと環境が立ち上がる。
+Ctrl + Shift + p / Cmd + Shift + p でideaboxと入力してEnterすると立ち上がる。
+
 ## Run The Sample
 
 ```bash
