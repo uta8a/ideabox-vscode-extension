@@ -8,3 +8,6 @@ title: 'ideabox-vscode-extension'
 - [ ] showInformationMessage でエラーログを右下に出すようにする
 - [ ] renovateを設定する
 - [ ] fmt導入したい
+- [ ] 自分用のUI libraryを用意する
+- [ ] taskの数をchecked/uncheckedで数字をBadgeで出してみるといいかも
+  - 参考: https://github.com/microsoft/vscode-webview-ui-toolkit/blob/main/src/badge/README.md
