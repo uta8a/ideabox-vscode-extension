@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { SourceIdeas } from '../types/idea';
 import * as frontmatter from 'gray-matter';
 
-const saveData = (data: SourceIdeas) => {
+const saveData = async (target: vscode.TextEditor, data: SourceIdeas) => {
     const { ideas, metadata } = data;
     const content = ideas.reduce((acc, idea) => {
         const { title, description, checked } = idea;
@@ -11,10 +11,11 @@ const saveData = (data: SourceIdeas) => {
     }, "\n");
     const writeData = frontmatter.stringify(content, metadata ?? {});
     // if activeTextEditor is none, throw Error below
-    vscode.window.activeTextEditor!.edit((editBuilder) => {
-        editBuilder.replace(new vscode.Range(vscode.window.activeTextEditor!.document.lineAt(0).range.start, vscode.window.activeTextEditor!.document.lineAt(vscode.window.activeTextEditor!.document.lineCount - 1).range.end), writeData);
-    });
-    vscode.window.activeTextEditor!.document.save();
+    console.log('[log] URI = ', target.document.uri);
+    const edit = new vscode.WorkspaceEdit();
+    const textEdit = new vscode.TextEdit(new vscode.Range(target.document.lineAt(0).range.start, target.document.lineAt(target.document.lineCount - 1).range.end), writeData);
+    console.log('[log] writeData = ', writeData);
+    await vscode.workspace.fs.writeFile(target.document.uri, Buffer.from(writeData));
 };
 
 export { saveData };

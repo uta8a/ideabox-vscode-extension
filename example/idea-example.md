@@ -2,7 +2,8 @@
 title: ideabox
 ---
 
-- [ ] todo#1
-  - どうもこんにちは
-- [x] done!
+- [ ] done!
   - 終わったよ
+- [x] hoge
+- [x] todo#1
+  - どうもこんにちは
