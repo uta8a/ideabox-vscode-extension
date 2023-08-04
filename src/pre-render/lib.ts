@@ -2,6 +2,7 @@ import { marked } from "marked";
 import * as frontmatter from "gray-matter";
 import { Idea, SourceIdeas } from "../types/idea";
 import { saveData } from "../utilities/saveData";
+import * as vscode from 'vscode';
 
 marked.setOptions({
     pedantic: false,
@@ -36,12 +37,12 @@ const preprocess = (source: string): SourceIdeas => {
         ideas.push({ title, description, checked });
     }
     return { ideas, metadata: data };
-}
+};
 
-const encode = (source: string): SourceIdeas => {
+const encode = (target: vscode.TextEditor, source: string): SourceIdeas => {
     const data = preprocess(source);
     const initialized = initialize(data);
-    saveData(initialized);
+    saveData(target, initialized);
     return initialized;
 };
 

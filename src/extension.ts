@@ -1,4 +1,4 @@
-import { commands, ExtensionContext, window } from "vscode";
+import { commands, ExtensionContext, window, workspace, WorkspaceEdit } from "vscode";
 import { IdeaboxPanel } from "./panels/IdeaboxPanel";
 import * as PreRender from "./pre-render/lib";
 
@@ -13,8 +13,8 @@ export function activate(context: ExtensionContext) {
       window.showErrorMessage("Invalid markdown file: select a valid markdown file for ideabox");
       return;
     }
-    const data = PreRender.encode(editor.document.getText());
-    IdeaboxPanel.render(context.extensionUri);
+    const data = PreRender.encode(editor, editor.document.getText());
+    IdeaboxPanel.render(context.extensionUri, editor, data);
   });
   context.subscriptions.push(startIdeaboxCommand);
 }

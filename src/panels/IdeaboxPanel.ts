@@ -1,6 +1,9 @@
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
+import { SourceIdeas } from "../types/idea";
+import { saveData } from "../utilities/saveData";
+import * as vscode from 'vscode';
 
 /**
  * This class manages the state and behavior of HelloWorld webview panels.
@@ -23,7 +26,7 @@ export class IdeaboxPanel {
    * @param panel A reference to the webview panel
    * @param extensionUri The URI of the directory containing the extension
    */
-  private constructor(panel: WebviewPanel, extensionUri: Uri) {
+  private constructor(panel: WebviewPanel, extensionUri: Uri, target: vscode.TextEditor, data: SourceIdeas) {
     this._panel = panel;
 
     // Set an event listener to listen for when the panel is disposed (i.e. when the user closes
@@ -34,7 +37,7 @@ export class IdeaboxPanel {
     this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri);
 
     // Set an event listener to listen for messages passed from the webview context
-    this._setWebviewMessageListener(this._panel.webview);
+    this._setWebviewMessageListener(this._panel.webview, target, data);
   }
 
   /**
@@ -43,7 +46,7 @@ export class IdeaboxPanel {
    *
    * @param extensionUri The URI of the directory containing the extension.
    */
-  public static render(extensionUri: Uri) {
+  public static render(extensionUri: Uri, target: vscode.TextEditor, data: SourceIdeas) {
     if (IdeaboxPanel.currentPanel) {
       // If the webview panel already exists reveal it
       IdeaboxPanel.currentPanel._panel.reveal(ViewColumn.One);
@@ -53,7 +56,7 @@ export class IdeaboxPanel {
         // Panel view type
         "start",
         // Panel title
-        "Hello World",
+        "ideabox",
         // The editor column the panel should be displayed in
         ViewColumn.One,
         // Extra panel configurations
@@ -65,7 +68,7 @@ export class IdeaboxPanel {
         }
       );
 
-      IdeaboxPanel.currentPanel = new IdeaboxPanel(panel, extensionUri);
+      IdeaboxPanel.currentPanel = new IdeaboxPanel(panel, extensionUri, target, data);
     }
   }
 
@@ -132,11 +135,12 @@ export class IdeaboxPanel {
    * @param webview A reference to the extension webview
    * @param context A reference to the extension context
    */
-  private _setWebviewMessageListener(webview: Webview) {
+  private _setWebviewMessageListener(webview: Webview, target: vscode.TextEditor, data: SourceIdeas) {
     webview.onDidReceiveMessage(
       (message: any) => {
         const command = message.command;
         const text = message.text;
+        console.log('[log] message = ', message);
 
         switch (command) {
           case "hello":
@@ -145,6 +149,15 @@ export class IdeaboxPanel {
             return;
           // Add more switch case statements here as more webview message commands
           // are created within the webview context (i.e. inside media/main.js)
+          case "initialize":
+            // send data to webview
+            webview.postMessage({ command: "ready", text: JSON.stringify(data) });
+            return;
+          case "update":
+            saveData(target, JSON.parse(text)).then(() => {
+              window.showInformationMessage("Saved!");
+            });
+            return;
         }
       },
       undefined,
